@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家還有多遠？— 特殊兒童收養困境下的漫漫長路</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1209;
+    --paper: #f5f0e8;
+    --warm: #c8a96e;
+    --terracotta: #b85c38;
+    --slate: #3d4f5c;
+    --muted: #8a7968;
+    --light: #ede8dc;
+    --accent: #d4714a;
+    --green: #4a7c59;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--terracotta);
+    z-index: 9999;
+    transition: width 0.1s;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    mix-blend-mode: normal;
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 1px 20px rgba(0,0,0,0.08);
+  }
+  .nav-logo {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--warm);
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: 500;
+  }
+  .nav-links a:hover { color: var(--terracotta); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: var(--slate);
+  }
+  .hero-parallax-bg {
+    position: absolute;
+    inset: -20%;
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(184,92,56,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 75% 70%, rgba(61,79,92,0.8) 0%, transparent 55%),
+      linear-gradient(160deg, #1a1209 0%, #3d4f5c 50%, #2a2418 100%);
+    will-change: transform;
+  }
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E");
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 80px 80px 100px;
+    max-width: 900px;
+  }
+  .hero-kicker {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 32px;
+    border-bottom: 1px solid rgba(200,169,110,0.4);
+    padding-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #f5f0e8;
+    margin-bottom: 32px;
+  }
+  .hero-title .accent-char {
+    color: var(--terracotta);
+  }
+  .hero-subtitle {
+    font-size: 16px;
+    color: rgba(245,240,232,0.6);
+    max-width: 520px;
+    line-height: 2;
+    font-weight: 300;
+  }
+  .hero-byline {
+    position: absolute;
+    bottom: 40px;
+    right: 80px;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(245,240,232,0.4);
+    text-align: right;
+  }
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(245,240,232,0.4);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    animation: bounce 2s ease-in-out infinite;
+  }
+  .scroll-arrow {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, transparent, rgba(245,240,232,0.4));
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ── INTRO PULLQUOTE ── */
+  .intro-section {
+    padding: 120px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .intro-quote {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--slate);
+    border-left: 3px solid var(--terracotta);
+    padding-left: 32px;
+    position: relative;
+  }
+  .intro-quote::before {
+    content: '"';
+    font-size: 120px;
+    line-height: 0;
+    position: absolute;
+    top: 50px;
+    left: -10px;
+    color: var(--terracotta);
+    opacity: 0.15;
+    font-family: Georgia, serif;
+  }
+  .intro-text p {
+    margin-bottom: 20px;
+    color: var(--ink);
+    font-weight: 300;
+  }
+  .intro-source {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 16px;
+  }
+
+  /* ── SECTION STYLES ── */
+  section { position: relative; }
+
+  .section-header {
+    text-align: center;
+    padding: 80px 40px 60px;
+    position: relative;
+  }
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 120px;
+    font-weight: 900;
+    color: var(--light);
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 0;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .section-tag {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--ink);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── PARALLAX BAND ── */
+  .parallax-band {
+    height: 60vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .parallax-band-bg {
+    position: absolute;
+    inset: -30%;
+    background: linear-gradient(135deg, #2a2418 0%, #3d4f5c 100%);
+    will-change: transform;
+  }
+  .parallax-band-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26,18,9,0.55);
+  }
+  .parallax-band-text {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px;
+  }
+  .parallax-band-text blockquote {
+    font-family: 'Noto Serif TC', serif;
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 300;
+    color: #f5f0e8;
+    line-height: 1.8;
+    max-width: 800px;
+  }
+  .parallax-band-text cite {
+    display: block;
+    margin-top: 20px;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: var(--warm);
+    font-style: normal;
+  }
+
+  /* ── CONTENT CARDS ── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+  .stat-card {
+    padding: 48px 40px;
+    border-right: 1px solid rgba(138,121,104,0.2);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .stat-card:last-child { border-right: none; }
+  .stat-card:hover { background: rgba(184,92,56,0.04); }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 900;
+    color: var(--terracotta);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .stat-label {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .stat-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .stat-card .read-more {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--terracotta);
+    text-transform: uppercase;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .stat-card .read-more:hover { opacity: 0.6; }
+
+  /* ── STORY SECTION ── */
+  .story-section {
+    padding: 100px 80px;
+    background: var(--slate);
+    color: var(--paper);
+  }
+  .story-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 80px;
+    align-items: start;
+  }
+  .story-body h2 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 32px;
+    color: var(--warm);
+  }
+  .story-body p {
+    margin-bottom: 20px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.85);
+    font-size: 16px;
+  }
+  .story-aside {
+    position: sticky;
+    top: 100px;
+  }
+  .aside-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(200,169,110,0.2);
+    border-radius: 2px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+  .aside-card-title {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 16px;
+  }
+  .aside-card p {
+    font-size: 14px;
+    color: rgba(245,240,232,0.7);
+    line-height: 1.8;
+  }
+
+  /* ── CHART ── */
+  .chart-section {
+    padding: 100px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .chart-container {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bar-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .bar-track {
+    height: 10px;
+    background: var(--light);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    width: 0;
+    transition: width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .bar-fill.terracotta { background: var(--terracotta); }
+  .bar-fill.slate { background: var(--slate); }
+  .bar-fill.green { background: var(--green); }
+  .chart-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .chart-text h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+  .chart-text p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.9;
+  }
+  .big-stat {
+    margin-top: 32px;
+    padding: 32px;
+    background: var(--light);
+    border-left: 4px solid var(--terracotta);
+  }
+  .big-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    font-weight: 900;
+    color: var(--terracotta);
+    line-height: 1;
+  }
+  .big-stat-label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  /* ── POLICY COMPARISON ── */
+  .policy-section {
+    padding: 100px 80px;
+    background: #f0ebe0;
+  }
+  .policy-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 60px;
+  }
+  .compare-col {
+    padding: 48px;
+    position: relative;
+  }
+  .compare-col.taiwan { background: #fff; border-top: 4px solid var(--muted); }
+  .compare-col.usa { background: var(--slate); border-top: 4px solid var(--green); color: var(--paper); }
+  .compare-col-title {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    font-weight: 600;
+  }
+  .taiwan .compare-col-title { color: var(--muted); }
+  .usa .compare-col-title { color: var(--green); }
+  .compare-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .compare-list li {
+    display: flex;
+    gap: 16px;
+    font-size: 15px;
+    line-height: 1.7;
+    padding-bottom: 20px;
+    border-bottom: 1px solid;
+  }
+  .taiwan .compare-list li { border-color: rgba(138,121,104,0.15); color: var(--ink); }
+  .usa .compare-list li { border-color: rgba(255,255,255,0.1); color: rgba(245,240,232,0.8); }
+  .compare-list li:last-child { border-bottom: none; }
+  .compare-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  /* ── TIMELINE ── */
+  .timeline-section {
+    padding: 100px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .timeline {
+    margin-top: 60px;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--terracotta), transparent);
+  }
+  .timeline-item {
+    padding-left: 72px;
+    margin-bottom: 60px;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+  .timeline-dot {
+    position: absolute;
+    left: 17px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    border: 3px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--terracotta);
+  }
+  .timeline-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 8px;
+  }
+  .timeline-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .timeline-desc {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.85;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,9,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    padding: 40px;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: var(--paper);
+    max-width: 680px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 60px;
+    position: relative;
+    transform: translateY(30px);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal-overlay.active .modal-box { transform: translateY(0); }
+  .modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: 1px solid rgba(138,121,104,0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .modal-close:hover { background: var(--terracotta); color: #fff; border-color: var(--terracotta); }
+  .modal-tag {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .modal-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 24px;
+    line-height: 1.4;
+  }
+  .modal-content p {
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.9;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+  .modal-content blockquote {
+    border-left: 3px solid var(--terracotta);
+    padding: 16px 24px;
+    margin: 24px 0;
+    background: var(--light);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--slate);
+  }
+
+  /* ── VOICE CARDS ── */
+  .voices-section {
+    padding: 100px 80px;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .voices-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .voices-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--paper);
+    margin-bottom: 60px;
+    text-align: center;
+  }
+  .voices-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .voice-card {
+    padding: 48px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    overflow: hidden;
+  }
+  .voice-card::before {
+    content: '"';
+    font-family: Georgia, serif;
+    font-size: 200px;
+    color: rgba(255,255,255,0.03);
+    position: absolute;
+    top: -40px;
+    right: -20px;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .voice-card:hover {
+    background: rgba(184,92,56,0.1);
+    transform: translateY(-2px);
+  }
+  .voice-quote {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: rgba(245,240,232,0.9);
+    line-height: 1.8;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .voice-source {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: var(--warm);
+    position: relative;
+    z-index: 1;
+  }
+  .voice-role {
+    font-size: 11px;
+    color: rgba(245,240,232,0.3);
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── CLOSING ── */
+  .closing-section {
+    padding: 140px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .closing-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(184,92,56,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .closing-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .closing-inner p {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--slate);
+    margin-bottom: 24px;
+  }
+  .closing-inner strong {
+    font-weight: 700;
+    color: var(--terracotta);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 60px 80px;
+    background: var(--ink);
+    color: rgba(245,240,232,0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+  footer a { color: var(--warm); text-decoration: none; }
+
+  /* ── FADE IN ANIMATION ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  .fade-in-delay-1 { transition-delay: 0.15s; }
+  .fade-in-delay-2 { transition-delay: 0.3s; }
+  .fade-in-delay-3 { transition-delay: 0.45s; }
+
+  /* ── STICKY SIDEBAR STORY ── */
+  .scrolly-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 80px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 80px;
+    align-items: start;
+  }
+  .scrolly-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .scrolly-step {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+    opacity: 0.3;
+    transition: opacity 0.4s;
+  }
+  .scrolly-step.active { opacity: 1; }
+  .scrolly-step-content h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .scrolly-step-content p {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 12px;
+  }
+  .scrolly-sticky {
+    position: sticky;
+    top: 120px;
+  }
+  .scrolly-visual {
+    background: var(--slate);
+    aspect-ratio: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+  }
+  .scrolly-visual-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    opacity: 0;
+    transition: opacity 0.5s;
+    text-align: center;
+  }
+  .scrolly-visual-content.active { opacity: 1; }
+  .visual-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 96px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--warm);
+    margin-bottom: 16px;
+  }
+  .visual-text {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px;
+    color: rgba(245,240,232,0.7);
+    line-height: 1.8;
+  }
+
+  @media (max-width: 768px) {
+    .intro-section, .compare-grid, .cards-grid,
+    .chart-container, .story-inner, .scrolly-section,
+    .voices-grid { grid-template-columns: 1fr; }
+    nav { padding: 16px 24px; }
+    .hero-content { padding: 80px 24px 80px; }
+    .section-header, .chart-section, .timeline-section,
+    .policy-section, .voices-section, .closing-section { padding: 60px 24px; }
+    .story-section { padding: 60px 24px; }
+    .scrolly-section { padding: 60px 24px; }
+    .scrolly-sticky { display: none; }
+    .modal-box { padding: 40px 24px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav id="main-nav">
+  <div class="nav-logo">融媒體報導 第六組</div>
+  <ul class="nav-links">
+    <li><a href="#section-1">困境</a></li>
+    <li><a href="#section-2">故事</a></li>
+    <li><a href="#section-3">制度</a></li>
+    <li><a href="#section-4">出路</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-parallax-bg" id="hero-bg"></div>
+  <div class="hero-texture"></div>
+  <div class="hero-content">
+    <span class="hero-kicker">深度報導 · 台灣收養困境</span>
+    <h1 class="hero-title">
+      家<br>還有<br><span class="accent-char">多遠</span>？
+    </h1>
+    <p class="hero-subtitle">特殊兒童收養困境下的漫漫長路——當多數家庭傾向選擇健康個案，那些帶有特殊需求的孩子，只能在機構長大，或被推向遙遠的異國。</p>
+  </div>
+  <div class="hero-byline">
+    記者｜孟祥宇、丘羨陶、邱柏翔、黃千艾
+  </div>
+  <div class="hero-scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<div class="intro-section fade-in">
+  <div class="intro-quote">
+    「我並不是為了領養一個小孩而去領養，而是剛好遇到我女兒。」
+    <p class="intro-source">——貝貝媽（化名），收養人</p>
+  </div>
+  <div class="intro-text">
+    <p>坐在自家經營的藥局內，貝貝媽回想起十八年前與女兒相遇的過程。當時她在基金會擔任週末寄養家庭義工，將才四個月大、因生父母藥癮而成為「毒寶寶」的貝貝帶回家。</p>
+    <p>直到貝貝的生母過世，外公不希望孫女在機構長大，最終決定授權出養。隨即在病床上簽下出養同意書，貝貝在一歲十個月大時，正式成為了他們的女兒。</p>
+    <p>然而，這樣的故事對更多等待出養的特殊需求孩子而言，依然是遙不可及的夢。</p>
+  </div>
+</div>
+
+<!-- SECTION 1: 數據困境 -->
+<div id="section-1"></div>
+<section>
+  <div class="section-header fade-in">
+    <div class="section-number">1</div>
+    <span class="section-tag">數據困境</span>
+    <h2 class="section-title">特殊兒童國內難找家</h2>
+  </div>
+
+  <div class="cards-grid">
+    <div class="stat-card fade-in" onclick="openModal('modal-91')">
+      <div class="stat-number">91%</div>
+      <div class="stat-label">特殊需求比例</div>
+      <div class="stat-desc">在小天使家園中，等待出養的兒少有高達九成一被歸類為特殊需求。</div>
+      <span class="read-more">深入了解 →</span>
+    </div>
+    <div class="stat-card fade-in fade-in-delay-1" onclick="openModal('modal-83')">
+      <div class="stat-number">83%</div>
+      <div class="stat-label">跨國出養比例</div>
+      <div class="stat-desc">2025年特殊兒童出養至國外的比例高達83%，遠高於一般兒童的35%。</div>
+      <span class="read-more">深入了解 →</span>
+    </div>
+    <div class="stat-card fade-in fade-in-delay-2" onclick="openModal('modal-3y')">
+      <div class="stat-number">3歲</div>
+      <div class="stat-label">收養媒合的分水嶺</div>
+      <div class="stat-desc">「三歲以後收養就很困難，但如果不幫他們找家，孩子只能在機構長大。」</div>
+      <span class="read-more">深入了解 →</span>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-section">
+    <div class="chart-container">
+      <div class="bar-chart" id="bar-chart">
+        <p style="font-size:12px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">2025年出養比例對比</p>
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span>一般兒童國外出養</span>
+            <span style="color:var(--terracotta);font-weight:600;">35%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill terracotta" data-width="35"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span>特殊兒童國外出養</span>
+            <span style="color:var(--terracotta);font-weight:600;">83%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill terracotta" data-width="83" style="opacity:0.7"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span>一般兒童國內出養</span>
+            <span style="color:var(--slate);font-weight:600;">65%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill slate" data-width="65"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-meta">
+            <span>特殊兒童國內出養</span>
+            <span style="color:var(--slate);font-weight:600;">17%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill slate" data-width="17" style="opacity:0.6"></div></div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--terracotta)"></div>國外出養</div>
+          <div class="legend-dot" style="background:var(--slate)"></div><span style="font-size:12px;color:var(--muted);">國內出養</span>
+        </div>
+      </div>
+      <div class="chart-text">
+        <h3>健康篩選下的系統性困境</h3>
+        <p>近五年整體收養媒合成功率雖有所提升，背後反映的卻是國內收養偏好健康篩選的現象——多數家庭傾向選擇低風險個案，而將高照顧成本的特殊兒童推向國際。</p>
+        <p>根據聯合國《兒童權利公約》第21條，跨國收養應為最後手段。台灣目前特殊需求兒童出養至國外的比例，與公約精神產生落差。</p>
+        <div class="big-stat">
+          <div class="big-stat-num">83%</div>
+          <div class="big-stat-label">2025年特殊兒童跨國出養比例<br>（資料來源：衛福部社家署114年收出養媒合服務概況表）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX BAND 1 -->
+<div class="parallax-band">
+  <div class="parallax-band-bg" id="parallax-1"></div>
+  <div class="parallax-band-overlay"></div>
+  <div class="parallax-band-text">
+    <blockquote>「台灣不能把跨國出養當成解方，必須先處理好親屬安置、寄養家庭、國內收養這些關鍵環節，而不是把問題丟給國外，再假裝問題解決了。」</blockquote>
+    <cite>——林宜輝，國立政治大學社會工作研究所副教授</cite>
+  </div>
+</div>
+
+<!-- SECTION 2: 故事 -->
+<div id="section-2"></div>
+<section>
+  <div class="section-header fade-in">
+    <div class="section-number">2</div>
+    <span class="section-tag">日常挑戰</span>
+    <h2 class="section-title">陪孩子走過一次次的「卡關」</h2>
+  </div>
+
+  <!-- Scrolly section -->
+  <div class="scrolly-section">
+    <div class="scrolly-steps">
+      <div class="scrolly-step active" data-visual="0">
+        <div class="scrolly-step-content">
+          <h3>哭了也沒人理的安靜</h3>
+          <p>貝貝媽發現，這個在機構裡「隔兩條街都能聽到哭聲」的孩子，一進到家裡卻變得異常安靜。</p>
+          <p>肚子餓從不啼哭，只會半夜一直吸手指。「因為在機構裡，孩子知道哭了也沒人理，哭沒有用。」</p>
+          <p>為了重建信任，貝貝媽每晚設下鬧鐘，在孩子發聲前主動餵奶，直到生活穩定，貝貝才終於敢放聲大哭。</p>
+        </div>
+      </div>
+      <div class="scrolly-step" data-visual="1">
+        <div class="scrolly-step-content">
+          <h3>自閉症：規律與秩序的世界</h3>
+          <p>貝貝三歲時診斷出自閉症。對她來說，規律十分重要，一旦現實與腦中的準則不符，就會陷入近乎強迫的焦慮。</p>
+          <p>在學校，若門平時從這一側打開，某天換成另一側，貝貝就無法進入教室。即便是老師請假換代課老師，這樣的改變都會讓她「卡」在門口。</p>
+        </div>
+      </div>
+      <div class="scrolly-step" data-visual="2">
+        <div class="scrolly-step-content">
+          <h3>基隆路上的對峙</h3>
+          <p>某個上班日，貝貝在銀行實習，因為塞車，貝貝媽建議在距離銀行五十公尺處提前下車。</p>
+          <p>這細微的變動對貝貝而言卻是巨大的衝擊。「他拒絕下車，認為那裡是紅線、認為會遲到，最後在銀行門口情緒全面爆發，衝上來拉住我的皮包尖叫。」</p>
+          <p>貝貝媽坦言，那天獨自走在基隆路上一邊走一邊哭，深感無力。</p>
+        </div>
+      </div>
+      <div class="scrolly-step" data-visual="3">
+        <div class="scrolly-step-content">
+          <h3>進步的定義，是跟自己比</h3>
+          <p>「一年前她還做不到在非固定地點下車，現在她已經可以應對不同的紅綠燈、在不同的路口下車，獨自去實習了。這就是她的進步。」</p>
+          <p>十八年的陪伴，每一小步都是巨大的突破。</p>
+        </div>
+      </div>
+    </div>
+    <div class="scrolly-sticky">
+      <div class="scrolly-visual">
+        <div class="scrolly-visual-content active" id="visual-0">
+          <div class="visual-num">🌙</div>
+          <div class="visual-text">在孩子還沒發聲前主動餵奶<br>重建孩子對世界的信任</div>
+        </div>
+        <div class="scrolly-visual-content" id="visual-1">
+          <div class="visual-num">🚪</div>
+          <div class="visual-text">門從哪側打開<br>對自閉症孩子而言都是一道關卡</div>
+        </div>
+        <div class="scrolly-visual-content" id="visual-2">
+          <div class="visual-num">50<span style="font-size:40px">m</span></div>
+          <div class="visual-text">提前五十公尺下車<br>細微變動引發全面爆發</div>
+        </div>
+        <div class="scrolly-visual-content" id="visual-3">
+          <div class="visual-num">18<span style="font-size:40px">年</span></div>
+          <div class="visual-text">十八年的陪伴<br>進步的定義是跟自己比</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VOICES SECTION -->
+<section class="voices-section">
+  <div class="voices-inner">
+    <h2 class="voices-title fade-in">當事人的聲音</h2>
+    <div class="voices-grid">
+      <div class="voice-card fade-in" onclick="openModal('modal-voice1')">
+        <p class="voice-quote">「那（些挑戰）就是我們的生活啊，一個家庭本來就有各種各樣的樣貌。」</p>
+        <div class="voice-source">貝貝媽（化名）</div>
+        <div class="voice-role">收養人，陪伴女兒十八年</div>
+      </div>
+      <div class="voice-card fade-in fade-in-delay-1" onclick="openModal('modal-voice2')">
+        <p class="voice-quote">「三歲以後收養就很困難，但如果不幫他們找家，孩子只能在機構長大。」</p>
+        <div class="voice-source">蘇淑霞</div>
+        <div class="voice-role">小天使家園收出養組長</div>
+      </div>
+      <div class="voice-card fade-in fade-in-delay-2" onclick="openModal('modal-voice3')">
+        <p class="voice-quote">「在台灣現行制度下，收養家庭的定位尚未明確——究竟應被視為一般家庭，還是執行永久安置功能、需要國家特別支持的家庭？」</p>
+        <div class="voice-source">陳玉楨</div>
+        <div class="voice-role">勵馨基金會台北分所主任</div>
+      </div>
+      <div class="voice-card fade-in fade-in-delay-3" onclick="openModal('modal-voice4')">
+        <p class="voice-quote">「家長最擔心的是孩子一輩子無法獨立，但只要及早介入，絕大多數孩子的語言發展都能進步。」</p>
+        <div class="voice-source">高婕</div>
+        <div class="voice-role">國立台北護理健康大學語言治療與聽力學系助理教授</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: 制度 -->
+<div id="section-3"></div>
+<section>
+  <div class="section-header fade-in">
+    <div class="section-number">3</div>
+    <span class="section-tag">制度困境</span>
+    <h2 class="section-title">補助未分級　台灣收養家庭的困境</h2>
+  </div>
+
+  <!-- Policy Comparison -->
+  <div class="policy-section">
+    <div class="policy-inner">
+      <p style="text-align:center;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">制度比較</p>
+      <h3 style="font-family:'Noto Serif TC',serif;font-size:28px;text-align:center;margin-bottom:8px;color:var(--ink);">台灣 vs. 美國</h3>
+      <p style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:0;">在收養特殊兒童的支持制度上，兩國存在顯著落差</p>
+      <div class="compare-grid fade-in">
+        <div class="compare-col taiwan">
+          <div class="compare-col-title">🇹🇼 台灣現況</div>
+          <ul class="compare-list">
+            <li><span class="compare-icon" style="color:#b85c38">✗</span>補助未區分一般兒童與收養兒童，資源金額大致相同</li>
+            <li><span class="compare-icon" style="color:#b85c38">✗</span>育嬰留停僅適用三歲以下幼童，大齡收養無法適用</li>
+            <li><span class="compare-icon" style="color:#b85c38">✗</span>語言早療需自費或在健保門診中長時間排隊</li>
+            <li><span class="compare-icon" style="color:#b85c38">✗</span>收養家庭定位未明確，難以制定對症政策</li>
+            <li><span class="compare-icon" style="color:#b85c38">✗</span>資源取得多靠家長主動蒐集，缺乏主動媒合機制</li>
+          </ul>
+        </div>
+        <div class="compare-col usa">
+          <div class="compare-col-title">🇺🇸 美國制度（對比參考）</div>
+          <ul class="compare-list">
+            <li><span class="compare-icon" style="color:#4a7c59">✓</span>Medicaid 公立保險涵蓋18歲以下身心障礙兒童醫療費用</li>
+            <li><span class="compare-icon" style="color:#4a7c59">✓</span>語言治療等早療課程可申請保險給付</li>
+            <li><span class="compare-icon" style="color:#4a7c59">✓</span>Title IV-E 法案：每月提供等同寄養費率之津貼</li>
+            <li><span class="compare-icon" style="color:#4a7c59">✓</span>2025年特殊需求收養稅額抵免最高每名 $17,280</li>
+            <li><span class="compare-icon" style="color:#4a7c59">✓</span>社區與政府共同分擔，家庭非孤立承擔照顧責任</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-section">
+    <div style="text-align:center" class="fade-in">
+      <span class="section-tag">政策動向</span>
+      <h3 style="font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;margin-top:8px;color:var(--ink);">育嬰留停鬆綁之路</h3>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">現行制度</div>
+        <div class="timeline-title">育嬰留停僅限三歲以下</div>
+        <div class="timeline-desc">許多大齡兒童在媒合成功時往往已超過三歲，導致家長在孩子最需要建立依附關係的初期，無法請假陪伴，形成制度性障礙。</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--warm)"></div>
+        <div class="timeline-label">專家建議</div>
+        <div class="timeline-title">改以「入籍後前三年」為基準</div>
+        <div class="timeline-desc">蘇淑霞建議：「收養大齡或特殊需求的孩子，要建立信任關係本來就比一般孩子困難。入籍後的前三年是他們感受安全感的黃金期，政府應該支持家長在這段時間專心陪伴。」</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="background:var(--green)"></div>
+        <div class="timeline-label">政策討論中</div>
+        <div class="timeline-title">衛福部社家署研議放寬至六歲</div>
+        <div class="timeline-desc">陳玉楨指出，目前衛生福利部社家署正與相關部會討論將年限放寬至六歲。「這項政策若能落實，等於是國家在背後告訴家長：我們看見了你的難處。」</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARALLAX BAND 2 -->
+<div class="parallax-band">
+  <div class="parallax-band-bg" id="parallax-2" style="background: linear-gradient(135deg, #1a1209 0%, #4a7c59 100%)"></div>
+  <div class="parallax-band-overlay"></div>
+  <div class="parallax-band-text">
+    <blockquote>「在國外收養特殊兒童，反而是一種優勢，因為整個社區與政府都會一起分擔照顧責任。」</blockquote>
+    <cite>——蘇淑霞，小天使家園收出養組長</cite>
+  </div>
+</div>
+
+<!-- SECTION 4: 出路 -->
+<div id="section-4"></div>
+<section class="story-section">
+  <div class="story-inner">
+    <div class="story-body">
+      <h2>當不完美成為日常：收養的另一種想像</h2>
+      <p>給特殊兒一個家，或許並沒有想像中的困難。許多收養人在面對特殊兒童的標籤時會感到焦慮，但專家指出，「完美」並非收養的必要條件。</p>
+      <p>高婕指出：「我們很難保證收養一個目前健康的孩子，他一輩子都能這麼健康。與其追求一個完美的目標，不如回歸到家庭的韌性夠不夠——我們是否能有足夠的彈性，去接下生命中那些預測不到的『黑天鵝事件』。」</p>
+      <p>這份韌性，建立在收養人對自己能力的清晰認識與坦承上。賴沂錚指出：「家長要對自己有足夠的認識，了解自己的有限跟有能力的點是什麼。當家長願意坦承接納自己的有限，社工才有辦法去跟他討論。有很多家庭一討論下去，會突然發現，原來這個孩子的健康、教養議題，沒有他想像中這麼困難，那麼承擔不來。」</p>
+      <p>唯有先建構完善的制度環境與支持體系，能接住收養家庭，收養的意願才會提高，讓這群特殊的孩子，在自己的土地上找到歸屬。</p>
+    </div>
+    <div class="story-aside">
+      <div class="aside-card">
+        <div class="aside-card-title">愛與安置的殘酷拉扯</div>
+        <p>寄養家庭若決定「自己收養」孩子，等同於減少一個社會安置名額。這使家庭陷入殘酷的二選一：選擇讓出名額（割捨長久陪伴的感情），或選擇愛這個孩子（自己收養，但佔用社會資源）。</p>
+      </div>
+      <div class="aside-card">
+        <div class="aside-card-title">早療的力量</div>
+        <p>就溝通障礙的早療而言，學界整體持樂觀態度。高婕指出，只要及早介入，絕大多數孩子的語言發展都能進步。早療不應只依賴醫院每週三十分鐘的門診，更重要的是家長在居家環境中的持續投入。</p>
+      </div>
+      <div class="aside-card" style="background:rgba(184,92,56,0.1);border-color:rgba(184,92,56,0.3);">
+        <div class="aside-card-title" style="color:var(--terracotta)">貝貝的音樂</div>
+        <p>貝貝親手作詞作曲，將對親生母親的思念化作旋律，在音符流轉間緩緩傾訴無盡懷念與情感。</p>
+        <a href="https://youtu.be/r-u5CmVnd1o" target="_blank" style="display:inline-block;margin-top:12px;font-size:12px;letter-spacing:0.15em;color:var(--terracotta);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px;">▶ 聆聽貝貝的歌</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing-section">
+  <div class="closing-bg"></div>
+  <div class="closing-inner fade-in">
+    <p>在台灣的某個角落，有孩子在機構的床上等待著一個可以稱之為「家」的地方。</p>
+    <p>等待的不只是愛，更是<strong>完善的制度</strong>、<strong>社會的接納</strong>，以及那些願意承擔「不完美」的家庭。</p>
+    <p>家還有多遠？這個答案，不只取決於收養家庭的勇氣，更取決於整個社會是否願意一起走這段路。</p>
+  </div>
+</section>
+
+<footer>
+  <div>© 2025 融媒體報導 第六組</div>
+  <div>孟祥宇 · 丘羨陶 · 邱柏翔 · 黃千艾</div>
+  <div>資料來源：衛福部社家署 · 勵馨基金會 · 小天使家園</div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-91" onclick="closeModalOnOverlay(event, 'modal-91')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-91')">✕</button>
+    <span class="modal-tag">特殊需求定義</span>
+    <h2 class="modal-title">91%：比你想像的更廣</h2>
+    <div class="modal-content">
+      <p>小天使家園收出養組長蘇淑霞指出，「特殊需求」的定義比外界想像得更廣。不僅包含身心障礙或發展遲緩，亦涵蓋：</p>
+      <blockquote>三歲以上的大齡兒童、毒寶寶、父母入監服刑者，甚至僅有血管瘤或外貌受損的孩子。</blockquote>
+      <p>在小天使家園中，特殊需求兒少比例高達91%。這個數字背後，是每一個在等待中成長的孩子。</p>
+      <p>「三歲」更成為收養媒合的重要分水嶺——超過三歲的孩子，在國內找到收養家庭的機率大幅下降，許多最終只能走向跨國出養或在機構長大。</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-83" onclick="closeModalOnOverlay(event, 'modal-83')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-83')">✕</button>
+    <span class="modal-tag">跨國出養</span>
+    <h2 class="modal-title">83%：與公約精神的落差</h2>
+    <div class="modal-content">
+      <p>根據衛生福利部社會及家庭署收出養媒合服務概況表，2025年身心障礙、發展遲緩或疾病等特殊兒童，出養至國外的比例高達83%，遠高於一般兒童的35%。</p>
+      <blockquote>「我們在國內都會先試幾輪媒合，但最後卡關的幾乎都是健康議題。」——賴沂錚，勵馨基金會台北分所督導</blockquote>
+      <p>根據聯合國《兒童權利公約》第21條，跨國收養應為最後手段，各國應優先促成國內收養，以確保兒童在熟悉的文化環境中成長。</p>
+      <p>林宜輝指出，這些跨國收養者成年後，往往面臨身分認同與文化歸屬的拉扯：「隨著年紀增長，他們會發現膚色與養父母不同，產生難以融入主流社會、卻也回不去原生文化的矛盾，永遠在尋根與感恩之間掙扎。」</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-3y" onclick="closeModalOnOverlay(event, 'modal-3y')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-3y')">✕</button>
+    <span class="modal-tag">年齡分水嶺</span>
+    <h2 class="modal-title">三歲：命運的分叉點</h2>
+    <div class="modal-content">
+      <p>在台灣的收養系統中，「三歲」是一個關鍵的分水嶺。超過三歲的兒童，在國內找到收養家庭的機率大幅下降。</p>
+      <p>這個現象與育嬰留停制度息息相關：目前台灣的育嬰留職停薪僅適用於三歲以下的幼童，許多大齡兒童在媒合成功時已超過三歲，導致家長無法請假陪伴。</p>
+      <blockquote>「收養大齡或特殊需求的孩子，要建立信任關係本來就比一般孩子困難。入籍後的前三年是他們感受安全感的黃金期，政府應該支持家長在這段時間專心陪伴，而不是卡在孩子的生理年齡。」——蘇淑霞</blockquote>
+      <p>目前衛福部社家署正與相關部會討論將年限放寬至六歲，若能落實，將對大齡兒童的媒合帶來正面影響。</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-voice1" onclick="closeModalOnOverlay(event, 'modal-voice1')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-voice1')">✕</button>
+    <span class="modal-tag">收養人的聲音</span>
+    <h2 class="modal-title">貝貝媽：那些挑戰就是我們的生活</h2>
+    <div class="modal-content">
+      <p>十八年來，貝貝媽陪女兒看心智科、面對各種情緒爆發。貝貝在三歲時取得身心障礙手冊，診斷為自閉症，對她來說，規律與秩序十分重要。</p>
+      <blockquote>「那（些挑戰）就是我們的生活啊，一個家庭本來就有各種各樣的樣貌。」</blockquote>
+      <p>被問到如何看待這段旅程，貝貝媽的答案平靜而有力。她並不是為了「完成收養」而收養，而是因為在那個偶然的相遇中，看見了自己的女兒。</p>
+      <p>進步的定義，是跟自己比：「一年前她還做不到在非固定地點下車，現在她已經可以應對不同的紅綠燈去實習了。這就是她的進步。」</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-voice2" onclick="closeModalOnOverlay(event, 'modal-voice2')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-voice2')">✕</button>
+    <span class="modal-tag">機構工作者的聲音</span>
+    <h2 class="modal-title">蘇淑霞：孩子只能在機構長大</h2>
+    <div class="modal-content">
+      <p>擔任小天使家園收出養組長的蘇淑霞，每天面對的是那些在等待中的孩子。她看見制度的不足，也看見每個孩子心中對家的渴望。</p>
+      <blockquote>「三歲以後收養就很困難，但如果不幫他們找家，孩子只能在機構長大。」</blockquote>
+      <p>她指出，在國外收養特殊兒童反而是一種優勢，因為整個社區與政府都會一起分擔照顧責任。這與台灣收養家庭往往孤立承擔的現狀形成鮮明對比。</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-voice3" onclick="closeModalOnOverlay(event, 'modal-voice3')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-voice3')">✕</button>
+    <span class="modal-tag">政策工作者的聲音</span>
+    <h2 class="modal-title">陳玉楨：制度定位不明確</h2>
+    <div class="modal-content">
+      <p>勵馨基金會台北分所主任陳玉楨長期關注收養制度議題。她指出，台灣收養家庭面臨的最根本問題是制度定位不明。</p>
+      <blockquote>「在台灣現行制度下，收養家庭的定位尚未明確——究竟應被視為一般家庭，還是執行永久安置功能、需要國家特別支持的家庭？這個問題若無法釐清，補助政策便難以對症下藥。」</blockquote>
+      <p>她對育嬰留停放寬持樂觀態度：「大齡收養的孩子進到新家，最需要的是由家長好好陪著重新建立依附關係。這項政策若能落實，等於是國家在背後告訴家長：我們看見了你的難處。」</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-voice4" onclick="closeModalOnOverlay(event, 'modal-voice4')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-voice4')">✕</button>
+    <span class="modal-tag">學者的聲音</span>
+    <h2 class="modal-title">高婕：早療的力量</h2>
+    <div class="modal-content">
+      <p>國立台北護理健康大學語言治療與聽力學系助理教授高婕，對收養特殊兒童持樂觀態度。</p>
+      <blockquote>「家長最擔心的是孩子一輩子無法獨立，但只要及早介入，絕大多數孩子的語言發展都能進步。」</blockquote>
+      <p>她提醒，早療不應只依賴醫院每週三十分鐘的門診，更重要的是家長在居家環境中的持續投入，才能盡早達到獨立生活的目標。</p>
+      <p>對於「能否接受特殊兒童」的焦慮，她這樣說：「我們很難保證收養一個目前健康的孩子，他一輩子都能這麼健康。與其追求一個完美的目標，不如回歸到家庭的韌性夠不夠。」</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── PROGRESS BAR ──
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total = document.body.scrollHeight - window.innerHeight;
+  progressBar.style.width = (scrolled / total * 100) + '%';
+});
+
+// ── NAV SCROLL ──
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ── PARALLAX HERO ──
+const heroBg = document.getElementById('hero-bg');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (heroBg) heroBg.style.transform = `translateY(${y * 0.4}px)`;
+});
+
+// ── PARALLAX BANDS ──
+const p1 = document.getElementById('parallax-1');
+const p2 = document.getElementById('parallax-2');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (p1) {
+    const rect = p1.parentElement.getBoundingClientRect();
+    p1.style.transform = `translateY(${-rect.top * 0.3}px)`;
+  }
+  if (p2) {
+    const rect = p2.parentElement.getBoundingClientRect();
+    p2.style.transform = `translateY(${-rect.top * 0.3}px)`;
+  }
+});
+
+// ── INTERSECTION OBSERVER: FADE IN ──
+const fadeEls = document.querySelectorAll('.fade-in');
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12 });
+fadeEls.forEach(el => fadeObserver.observe(el));
+
+// ── INTERSECTION OBSERVER: TIMELINE ──
+const timelineItems = document.querySelectorAll('.timeline-item');
+const timelineObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.2 });
+timelineItems.forEach(el => timelineObserver.observe(el));
+
+// ── BAR CHART ANIMATION ──
+const barChart = document.getElementById('bar-chart');
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.bar-fill').forEach(fill => {
+        const w = fill.getAttribute('data-width');
+        fill.style.width = w + '%';
+      });
+      barObserver.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+if (barChart) barObserver.observe(barChart);
+
+// ── SCROLLYTELLING ──
+const steps = document.querySelectorAll('.scrolly-step');
+const visuals = document.querySelectorAll('.scrolly-visual-content');
+const scrollyObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const idx = e.target.getAttribute('data-visual');
+      steps.forEach(s => s.classList.remove('active'));
+      visuals.forEach(v => v.classList.remove('active'));
+      e.target.classList.add('active');
+      const v = document.getElementById('visual-' + idx);
+      if (v) v.classList.add('active');
+    }
+  });
+}, { threshold: 0.5 });
+steps.forEach(s => scrollyObserver.observe(s));
+
+// ── MODALS ──
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+function closeModalOnOverlay(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => {
+      m.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  }
+});
+</script>
+</body>
+</html>
