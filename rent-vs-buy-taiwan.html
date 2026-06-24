@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>租 vs 買｜台灣居住決策計算機</title>
+<style>
+  :root {
+    --bg: #0f1318;
+    --surface: #181d25;
+    --card: #1e2530;
+    --border: #2a3340;
+    --accent: #c8a95e;
+    --accent-dim: rgba(200,169,94,0.12);
+    --accent-mid: rgba(200,169,94,0.35);
+    --buy: #5b8fe8;
+    --rent: #e87b5b;
+    --green: #52c97a;
+    --text: #e8ecf0;
+    --text-dim: #7a8799;
+    --text-mid: #aebac8;
+    --font: 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 2.5rem 2rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0a0e14 0%, var(--bg) 100%);
+  }
+  .eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  h1 span { color: var(--accent); }
+  .sub {
+    margin-top: 0.5rem;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── City Preset ── */
+  .city-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.8rem;
+  }
+  .city-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-mid);
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+  .city-btn:hover, .city-btn.active {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Panel / Card ── */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .panel-head {
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .panel-head .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-buy { background: var(--buy); }
+  .dot-rent { background: var(--rent); }
+  .dot-both { background: var(--accent); }
+
+  /* ── Input Group ── */
+  .input-body { padding: 1.2rem 1.4rem; display: flex; flex-direction: column; gap: 1rem; }
+  .field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+  .field { display: flex; flex-direction: column; gap: 0.3rem; }
+  .field.full { grid-column: 1 / -1; }
+  label {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .unit {
+    position: absolute;
+    right: 0.7rem;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    pointer-events: none;
+  }
+  input[type="number"], input[type="range"], select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 7px;
+    padding: 0.5rem 2.2rem 0.5rem 0.8rem;
+    font-size: 0.9rem;
+    width: 100%;
+    font-family: var(--font);
+    outline: none;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input:focus { border-color: var(--accent); }
+  select { padding-right: 0.8rem; cursor: pointer; }
+
+  /* slider */
+  input[type="range"] {
+    padding: 0; border: none; background: transparent;
+    height: 4px; cursor: pointer;
+    accent-color: var(--accent);
+  }
+  .slider-row { display: flex; align-items: center; gap: 0.8rem; }
+  .slider-val {
+    font-size: 1rem; font-weight: 700; color: var(--accent);
+    min-width: 2.4rem; text-align: right;
+  }
+
+  /* policy toggle */
+  .policy-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.75rem 1rem;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-mid);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .policy-row input[type="checkbox"] {
+    width: 1rem; height: 1rem; accent-color: var(--accent);
+    cursor: pointer; flex-shrink: 0;
+  }
+  .policy-label { font-size: 0.82rem; color: var(--text-mid); line-height: 1.4; }
+  .policy-label strong { color: var(--accent); }
+
+  /* section divider */
+  .divider {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 0 0 0.4rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0.2rem;
+  }
+
+  /* ── Right column ── */
+  .right-col { display: flex; flex-direction: column; gap: 1.2rem; }
+
+  /* KPI row */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 600px) { .kpi-row { grid-template-columns: 1fr; } }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+  }
+  .kpi-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.3rem; }
+  .kpi-val { font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .kpi-sub { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.15rem; }
+  .kpi-val.buy { color: var(--buy); }
+  .kpi-val.rent { color: var(--rent); }
+  .kpi-val.accent { color: var(--accent); }
+
+  /* verdict */
+  .verdict {
+    border-radius: 12px;
+    padding: 1rem 1.4rem;
+    border: 1px solid;
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .verdict.favor-buy { background: rgba(91,143,232,0.08); border-color: rgba(91,143,232,0.3); }
+  .verdict.favor-rent { background: rgba(232,123,91,0.08); border-color: rgba(232,123,91,0.3); }
+  .verdict.favor-tie { background: var(--accent-dim); border-color: var(--accent-mid); }
+  .verdict-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+
+  /* chart area */
+  .chart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+  }
+  .chart-title { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 1rem; }
+  canvas { width: 100% !important; }
+
+  /* table */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead th {
+    background: var(--card);
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid rgba(42,51,64,0.6); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.02); }
+  tbody td { padding: 0.55rem 1rem; }
+  .td-year { color: var(--text-dim); font-size: 0.75rem; }
+  .td-buy { color: var(--buy); font-variant-numeric: tabular-nums; }
+  .td-rent { color: var(--rent); font-variant-numeric: tabular-nums; }
+  .td-diff { font-variant-numeric: tabular-nums; }
+  .td-diff.pos { color: var(--green); }
+  .td-diff.neg { color: var(--rent); }
+  .row-highlight { background: rgba(200,169,94,0.06) !important; }
+  .badge {
+    display: inline-block;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent-mid);
+    border-radius: 4px;
+    font-size: 0.62rem;
+    padding: 0.1rem 0.4rem;
+    margin-left: 0.4rem;
+    letter-spacing: 0.04em;
+  }
+
+  /* note */
+  .note {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    padding: 1rem 1.4rem;
+    border-top: 1px solid var(--border);
+    line-height: 1.7;
+  }
+  .note a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">台灣居住財務分析 · 2026</div>
+  <h1>租屋 vs 購屋<br><span>長期成本比較計算機</span></h1>
+  <p class="sub">以最新台灣市場數據為基準，協助您評估買房或租屋的長期財務影響</p>
+</header>
+
+<div class="container">
+
+  <!-- 城市預設 -->
+  <div style="margin-bottom:0.6rem; font-size:0.72rem; color:var(--text-dim); letter-spacing:0.08em; text-transform:uppercase;">快速套用城市預設值</div>
+  <div class="city-row">
+    <button class="city-btn active" onclick="applyCity('taipei')">台北市</button>
+    <button class="city-btn" onclick="applyCity('newtaipei')">新北市</button>
+    <button class="city-btn" onclick="applyCity('taoyuan')">桃園市</button>
+    <button class="city-btn" onclick="applyCity('taichung')">台中市</button>
+    <button class="city-btn" onclick="applyCity('tainan')">台南市</button>
+    <button class="city-btn" onclick="applyCity('kaohsiung')">高雄市</button>
+    <button class="city-btn" onclick="applyCity('custom')">自訂</button>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT: inputs -->
+    <div>
+      <!-- 購屋參數 -->
+      <div class="panel" style="margin-bottom:1rem;">
+        <div class="panel-head"><span class="dot dot-buy"></span>購屋參數</div>
+        <div class="input-body">
+          <div class="divider">房屋條件</div>
+          <div class="field-group">
+            <div class="field full">
+              <label>房屋總價（萬元）</label>
+              <div class="input-wrap">
+                <input type="number" id="housePrice" value="2800" min="100" step="50">
+                <span class="unit">萬</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>貸款成數</label>
+              <div class="input-wrap">
+                <input type="number" id="loanRatio" value="70" min="30" max="90" step="5">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>貸款年期</label>
+              <div class="input-wrap">
+                <input type="number" id="loanYears" value="30" min="10" max="40" step="5">
+                <span class="unit">年</span>
+              </div>
+            </div>
+          </div>
+          <div class="divider">利率設定</div>
+          <div class="field-group">
+            <div class="field">
+              <label>房貸利率</label>
+              <div class="input-wrap">
+                <input type="number" id="mortgageRate" value="2.32" min="1" max="6" step="0.01">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>投資報酬率</label>
+              <div class="input-wrap">
+                <input type="number" id="investRate" value="5.0" min="0" max="12" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+          </div>
+          <!-- 新青安政策 -->
+          <label class="policy-row">
+            <input type="checkbox" id="singanPolicy" onchange="calculate()">
+            <span class="policy-label">
+              <strong>新青安貸款</strong>：利率補貼至 <strong>1.775%</strong>（前2年），第3年起 2.24%。<br>
+              條件：首購、20–45歲、貸款上限 1,000 萬元
+            </span>
+          </label>
+          <div class="divider">持有成本</div>
+          <div class="field-group">
+            <div class="field">
+              <label>房屋稅＋地價稅（年）</label>
+              <div class="input-wrap">
+                <input type="number" id="propertyTax" value="0.15" min="0" max="2" step="0.01">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>管理費＋維修（月）</label>
+              <div class="input-wrap">
+                <input type="number" id="maintenance" value="3000" min="0" step="500">
+                <span class="unit">元</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>房價年漲幅</label>
+              <div class="input-wrap">
+                <input type="number" id="priceGrowth" value="2.0" min="-5" max="10" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>買賣交易成本</label>
+              <div class="input-wrap">
+                <input type="number" id="txCost" value="2.0" min="0" max="5" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 租屋參數 -->
+      <div class="panel" style="margin-bottom:1rem;">
+        <div class="panel-head"><span class="dot dot-rent"></span>租屋參數</div>
+        <div class="input-body">
+          <div class="field-group">
+            <div class="field full">
+              <label>月租金（元）</label>
+              <div class="input-wrap">
+                <input type="number" id="monthlyRent" value="22000" min="1000" step="500">
+                <span class="unit">元</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>租金年漲幅</label>
+              <div class="input-wrap">
+                <input type="number" id="rentGrowth" value="2.3" min="0" max="8" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>租金補貼（月）</label>
+              <div class="input-wrap">
+                <input type="number" id="rentSubsidy" value="0" min="0" step="500">
+                <span class="unit">元</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:0.73rem; color:var(--text-dim); line-height:1.5;">
+            💡 政府租金補貼（2025起）：一般戶最高 3,500 元/月；弱勢族群最高 8,000 元/月。可至住宅補貼資訊整合平台申請。
+          </div>
+        </div>
+      </div>
+
+      <!-- 比較年期 -->
+      <div class="panel">
+        <div class="panel-head"><span class="dot dot-both"></span>比較年期</div>
+        <div class="input-body">
+          <div class="field">
+            <label>比較年期</label>
+            <div class="slider-row">
+              <input type="range" id="yearsSlider" min="5" max="40" value="20" step="1" oninput="document.getElementById('yearsVal').textContent=this.value; calculate()">
+              <span class="slider-val" id="yearsVal">20</span>
+              <span style="font-size:0.78rem; color:var(--text-dim);">年</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: results -->
+    <div class="right-col">
+
+      <!-- KPI -->
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-label">購屋月付（含利息）</div>
+          <div class="kpi-val buy" id="kpi-monthly-buy">—</div>
+          <div class="kpi-sub" id="kpi-monthly-buy-sub">房貸本息攤還</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">租屋實際月支出</div>
+          <div class="kpi-val rent" id="kpi-monthly-rent">—</div>
+          <div class="kpi-sub" id="kpi-monthly-rent-sub">扣除補貼後</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">損益平衡年</div>
+          <div class="kpi-val accent" id="kpi-breakeven">—</div>
+          <div class="kpi-sub" id="kpi-breakeven-sub">買房開始划算</div>
+        </div>
+      </div>
+
+      <!-- Verdict -->
+      <div class="verdict" id="verdict">計算中…</div>
+
+      <!-- Chart -->
+      <div class="chart-wrap">
+        <div class="chart-title">累積總成本比較（萬元）</div>
+        <canvas id="chart" height="240"></canvas>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <div class="panel-head" style="padding:0.8rem 1rem;"><span class="dot dot-both"></span>各年期累積成本明細</div>
+        <table>
+          <thead>
+            <tr>
+              <th>年份</th>
+              <th style="color:var(--buy)">購屋累積成本</th>
+              <th style="color:var(--rent)">租屋累積成本</th>
+              <th>差額（買−租）</th>
+              <th>購屋淨資產</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div class="note">
+          ※ 購屋累積成本＝頭期款＋各年貸款本息＋稅費管理費＋交易成本－房屋殘值增值。租屋累積成本＝各年租金支出（扣補貼）。<br>
+          ※ 利率數據來源：央行五大行庫新承做房貸利率（2026/02），一般行庫約 2.32%；新青安最低 1.775%。<br>
+          ※ 租金漲幅依主計總處 2025 年住宅租金指數年增率 2.3% 為基準。此計算機僅供參考，實際狀況請諮詢專業人士。
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── City Presets (2026 台灣六都參考數據) ──
+const CITIES = {
+  taipei:     { housePrice: 4500, monthlyRent: 28000, mortgageRate: 2.32, rentGrowth: 2.3, priceGrowth: 2.5 },
+  newtaipei:  { housePrice: 2800, monthlyRent: 18000, mortgageRate: 2.32, rentGrowth: 2.5, priceGrowth: 2.5 },
+  taoyuan:    { housePrice: 1800, monthlyRent: 14000, mortgageRate: 2.32, rentGrowth: 2.8, priceGrowth: 3.0 },
+  taichung:   { housePrice: 2200, monthlyRent: 16000, mortgageRate: 2.32, rentGrowth: 2.5, priceGrowth: 2.0 },
+  tainan:     { housePrice: 1400, monthlyRent: 11000, mortgageRate: 2.32, rentGrowth: 2.2, priceGrowth: 2.0 },
+  kaohsiung:  { housePrice: 1500, monthlyRent: 12000, mortgageRate: 2.32, rentGrowth: 2.3, priceGrowth: 2.0 },
+  custom:     null
+};
+let currentCity = 'taipei';
+
+function applyCity(city) {
+  currentCity = city;
+  document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (city === 'custom') { calculate(); return; }
+  const d = CITIES[city];
+  setVal('housePrice', d.housePrice);
+  setVal('monthlyRent', d.monthlyRent);
+  setVal('mortgageRate', d.mortgageRate);
+  setVal('rentGrowth', d.rentGrowth);
+  setVal('priceGrowth', d.priceGrowth);
+  calculate();
+}
+
+function setVal(id, val) {
+  document.getElementById(id).value = val;
+}
+
+function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function getBool(id) { return document.getElementById(id).checked; }
+
+// ── Canvas chart state ──
+let chartData = null;
+
+function calculate() {
+  const P0 = getVal('housePrice') * 10000;       // 房價（元）
+  const loanRatio = getVal('loanRatio') / 100;
+  const loanYears = getVal('loanYears');
+  const useSingan = getBool('singanPolicy');
+  const r_base = getVal('mortgageRate') / 100 / 12;
+  const investRate = getVal('investRate') / 100;
+  const propertyTaxRate = getVal('propertyTax') / 100;
+  const maintenance = getVal('maintenance');
+  const priceGrowth = getVal('priceGrowth') / 100;
+  const txCost = getVal('txCost') / 100;
+  const rent0 = getVal('monthlyRent');
+  const rentGrowth = getVal('rentGrowth') / 100;
+  const rentSubsidy = getVal('rentSubsidy');
+  const years = parseInt(document.getElementById('yearsSlider').value);
+
+  const downPayment = P0 * (1 - loanRatio);
+  const loanAmt = P0 * loanRatio;
+  const n = loanYears * 12; // 總期數
+
+  // 新青安：前2年利率 1.775%，第3年起 2.24%（若超過設定則用設定值）
+  const r_singan1 = 0.01775 / 12;
+  const r_singan2 = 0.0224 / 12;
+
+  function getMonthlyRate(month) {
+    if (!useSingan) return r_base;
+    if (loanAmt > 10000000) return r_base; // 超過1000萬不適用
+    if (month <= 24) return r_singan1;
+    return r_singan2;
+  }
+
+  // 計算月付（簡化：以固定利率逼近，因利率分段改用加權平均）
+  let r_eff;
+  if (!useSingan || loanAmt > 10000000) {
+    r_eff = r_base;
+  } else {
+    // 加權平均（概算）
+    const w1 = Math.min(24, n) / n;
+    const w2 = Math.max(0, n - 24) / n;
+    r_eff = r_singan1 * w1 + r_singan2 * w2;
+  }
+  const monthlyPayment = loanAmt * r_eff * Math.pow(1 + r_eff, n) / (Math.pow(1 + r_eff, n) - 1);
+
+  // 買賣一次性費用
+  const buyTxCost = P0 * txCost;
+
+  // ── 逐年計算 ──
+  const tableYears = [];
+  for (let y = 1; y <= years; y++) tableYears.push(y);
+
+  let buyCumCost = downPayment + buyTxCost; // 初始：頭期款＋交易成本
+  let rentCumCost = 0;
+  let loanBalance = loanAmt;
+  const results = [];
+
+  // 逐月計算更精確
+  let buyCum = downPayment + buyTxCost;
+  let rentCum = 0;
+  let lb = loanAmt;
+  const monthlyResults = [];
+
+  for (let m = 1; m <= years * 12; m++) {
+    const yr = Math.ceil(m / 12);
+    const mr = getMonthlyRate(m);
+    const interest = lb * mr;
+    const principal = monthlyPayment - interest;
+    lb = Math.max(0, lb - principal);
+
+    // 購屋月成本：本息 + 稅費/12 + 管理維修
+    const housePriceNow = P0 * Math.pow(1 + priceGrowth, m / 12);
+    const taxMonth = housePriceNow * propertyTaxRate / 12;
+    buyCum += monthlyPayment + taxMonth + maintenance;
+
+    // 租屋月成本
+    const rentNow = rent0 * Math.pow(1 + rentGrowth, (m - 1) / 12);
+    rentCum += Math.max(0, rentNow - rentSubsidy);
+
+    if (m % 12 === 0) {
+      const houseVal = housePriceNow;
+      const sellCost = houseVal * txCost;
+      // 購屋淨值：房屋市值 - 剩餘貸款 - 賣出交易成本
+      const netWorth = houseVal - lb - sellCost;
+      // 調整後買方累積成本（扣除資產淨值）
+      const buyEffective = buyCum - netWorth;
+      monthlyResults.push({
+        year: yr, buyCum: buyCum, rentCum: rentCum,
+        netWorth: netWorth, buyEffective: buyEffective, loanBal: lb,
+        houseVal: houseVal
+      });
+    }
+  }
+
+  // breakeven（調整後成本交叉點）
+  let breakevenYear = null;
+  for (let i = 0; i < monthlyResults.length; i++) {
+    if (monthlyResults[i].buyEffective <= monthlyResults[i].rentCum) {
+      breakevenYear = monthlyResults[i].year;
+      break;
+    }
+  }
+
+  // ── KPI ──
+  const fmtW = v => (v / 10000).toFixed(1) + ' 萬';
+  const fmtM = v => Math.round(v).toLocaleString() + ' 元';
+
+  document.getElementById('kpi-monthly-buy').textContent = fmtM(monthlyPayment + maintenance);
+  document.getElementById('kpi-monthly-buy-sub').textContent = `利率 ${useSingan && loanAmt <= 10000000 ? '新青安' : (getVal('mortgageRate') + '%')}，貸款 ${fmtW(loanAmt)}`;
+  const effectiveRent = Math.max(0, rent0 - rentSubsidy);
+  document.getElementById('kpi-monthly-rent').textContent = fmtM(effectiveRent);
+  document.getElementById('kpi-monthly-rent-sub').textContent = rentSubsidy > 0 ? `補貼 ${rentSubsidy.toLocaleString()} 元/月` : '無補貼';
+  if (breakevenYear) {
+    document.getElementById('kpi-breakeven').textContent = `第 ${breakevenYear} 年`;
+    document.getElementById('kpi-breakeven-sub').textContent = '買房累積成本低於租屋';
+  } else {
+    document.getElementById('kpi-breakeven').textContent = `> ${years} 年`;
+    document.getElementById('kpi-breakeven-sub').textContent = '比較期內未達損益平衡';
+  }
+
+  // ── Verdict ──
+  const lastR = monthlyResults[monthlyResults.length - 1];
+  const diff = lastR.buyEffective - lastR.rentCum;
+  const verdictEl = document.getElementById('verdict');
+  if (diff < 0) {
+    const saving = Math.abs(diff);
+    verdictEl.className = 'verdict favor-buy';
+    verdictEl.innerHTML = `<div class="verdict-title">🏠 ${years} 年後，購屋較划算</div>買房扣除資產淨值後，${years} 年累積成本比租屋節省約 <strong style="color:var(--buy)">${fmtW(saving)}</strong>。房屋資產淨值約 <strong style="color:var(--buy)">${fmtW(lastR.netWorth)}</strong>，貸款已還清比例 ${Math.round((1 - lastR.loanBal / loanAmt) * 100)}%。${breakevenYear ? `損益平衡點在第 <strong>${breakevenYear} 年</strong>。` : ''}`;
+  } else if (diff > 0) {
+    verdictEl.className = 'verdict favor-rent';
+    verdictEl.innerHTML = `<div class="verdict-title">🔑 ${years} 年後，租屋較節省</div>${years} 年內租屋累積支出比購屋有效成本少約 <strong style="color:var(--rent)">${fmtW(diff)}</strong>。${breakevenYear ? `若持有超過第 <strong>${breakevenYear} 年</strong>後情勢將逆轉。` : `在 ${years} 年比較期內購屋尚未達損益平衡，建議拉長持有期限或等待降息。`}`;
+  } else {
+    verdictEl.className = 'verdict favor-tie';
+    verdictEl.innerHTML = `<div class="verdict-title">⚖️ 租購成本相近</div>兩者在 ${years} 年期間累積成本接近，最終決策應考量個人職涯穩定性、家庭規劃與流動性需求。`;
+  }
+
+  // ── Table ──
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = '';
+  const showYears = [1, 2, 3, 5, 7, 10, 15, 20, 25, 30, 35, 40].filter(y => y <= years);
+  for (const sy of showYears) {
+    const d = monthlyResults[sy - 1];
+    if (!d) continue;
+    const diffVal = d.buyEffective - d.rentCum;
+    const isBreak = breakevenYear === sy;
+    const tr = document.createElement('tr');
+    if (isBreak) tr.className = 'row-highlight';
+    tr.innerHTML = `
+      <td class="td-year">${sy} 年${isBreak ? '<span class="badge">損益平衡</span>' : ''}</td>
+      <td class="td-buy">${fmtW(d.buyEffective)}</td>
+      <td class="td-rent">${fmtW(d.rentCum)}</td>
+      <td class="td-diff ${diffVal < 0 ? 'pos' : 'neg'}">${diffVal < 0 ? '▼' : '▲'} ${fmtW(Math.abs(diffVal))}</td>
+      <td style="color:var(--text-mid); font-variant-numeric:tabular-nums;">${fmtW(d.netWorth)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  // ── Chart ──
+  chartData = { results: monthlyResults, years };
+  drawChart();
+}
+
+function drawChart() {
+  if (!chartData) return;
+  const { results, years } = chartData;
+  const canvas = document.getElementById('chart');
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.clientWidth - 28;
+  const H = 240;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const pad = { top: 20, right: 20, bottom: 36, left: 60 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const allVals = results.flatMap(r => [r.buyEffective, r.rentCum]);
+  const minV = Math.min(...allVals) * 0.9;
+  const maxV = Math.max(...allVals) * 1.05;
+  const scaleX = i => pad.left + (i / (results.length - 1)) * cw;
+  const scaleY = v => pad.top + ch - ((v - minV) / (maxV - minV)) * ch;
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(42,51,64,0.8)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (i / 4) * ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
+    const val = maxV - (i / 4) * (maxV - minV);
+    ctx.fillStyle = 'rgba(122,135,153,0.8)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText((val / 10000).toFixed(0) + '萬', pad.left - 6, y + 4);
+  }
+
+  // X axis labels
+  ctx.fillStyle = 'rgba(122,135,153,0.8)';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  const labelYears = years <= 20 ? [5, 10, 15, 20] : [5, 10, 15, 20, 25, 30];
+  for (const ly of labelYears) {
+    if (ly > results.length) continue;
+    const x = scaleX(ly - 1);
+    ctx.fillText(ly + '年', x, H - 10);
+    ctx.strokeStyle = 'rgba(42,51,64,0.5)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, pad.top + ch); ctx.stroke();
+  }
+
+  // Rent area fill
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(results[0].rentCum));
+  for (let i = 1; i < results.length; i++) ctx.lineTo(scaleX(i), scaleY(results[i].rentCum));
+  ctx.lineTo(scaleX(results.length - 1), pad.top + ch);
+  ctx.lineTo(scaleX(0), pad.top + ch);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(232,123,91,0.07)';
+  ctx.fill();
+
+  // Buy area fill
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(results[0].buyEffective));
+  for (let i = 1; i < results.length; i++) ctx.lineTo(scaleX(i), scaleY(results[i].buyEffective));
+  ctx.lineTo(scaleX(results.length - 1), pad.top + ch);
+  ctx.lineTo(scaleX(0), pad.top + ch);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(91,143,232,0.07)';
+  ctx.fill();
+
+  // Rent line
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(results[0].rentCum));
+  for (let i = 1; i < results.length; i++) ctx.lineTo(scaleX(i), scaleY(results[i].rentCum));
+  ctx.strokeStyle = '#e87b5b';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Buy effective line
+  ctx.beginPath();
+  ctx.moveTo(scaleX(0), scaleY(results[0].buyEffective));
+  for (let i = 1; i < results.length; i++) ctx.lineTo(scaleX(i), scaleY(results[i].buyEffective));
+  ctx.strokeStyle = '#5b8fe8';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Crossover point
+  for (let i = 1; i < results.length; i++) {
+    const prev = results[i - 1];
+    const curr = results[i];
+    if ((prev.buyEffective - prev.rentCum) * (curr.buyEffective - curr.rentCum) <= 0) {
+      const cx2 = scaleX(i);
+      const cy2 = (scaleY(curr.buyEffective) + scaleY(curr.rentCum)) / 2;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#c8a95e';
+      ctx.fill();
+      ctx.strokeStyle = '#0f1318';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#c8a95e';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('損益平衡', cx2, cy2 - 10);
+      break;
+    }
+  }
+
+  // Legend
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#5b8fe8';
+  ctx.fillRect(pad.left, pad.top - 2, 16, 3);
+  ctx.fillStyle = '#aebac8';
+  ctx.fillText('購屋有效成本', pad.left + 20, pad.top + 5);
+  ctx.fillStyle = '#e87b5b';
+  ctx.fillRect(pad.left + 130, pad.top - 2, 16, 3);
+  ctx.fillStyle = '#aebac8';
+  ctx.fillText('租屋累積成本', pad.left + 150, pad.top + 5);
+}
+
+// Auto-recalc on input change
+document.querySelectorAll('input[type="number"], select').forEach(el => {
+  el.addEventListener('input', calculate);
+});
+
+// Init
+calculate();
+
+// Resize chart
+window.addEventListener('resize', () => { if (chartData) drawChart(); });
+</script>
+</body>
+</html>
